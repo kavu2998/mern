@@ -1,13 +1,14 @@
 const router = require('express').Router()
 let Contact = require('../models/contact.model')
+const { protect } = require('../middleware/protectRoute')
 
-router.route('/').get((req,res)=>{
+router.route('/').get(protect,(req,res)=>{
     Contact.find()
     .then(contacts=>res.json(contacts))
     .catch(err=>res.status(400).json('Error : '+err))
 })
 
-router.route('/add').post((req,res)=>{
+router.route('/add').post(protect,(req,res)=>{
     const {name, phone, address, age} = req.body
     const newContact = new Contact({
         name,
@@ -26,7 +27,7 @@ router.route('/:name').get((req,res)=>{
     .catch(err=>res.status(400).json('Error : '+err))
 })
 
-router.route('/update/:id').post((req,res)=>{
+router.route('/update/:id').post(protect,(req,res)=>{
     Contact.findById(req.params.id)
     .then(contact=>{
         contact.name = req.body.name
@@ -41,7 +42,7 @@ router.route('/update/:id').post((req,res)=>{
     .catch(err=>res.status(400).json('Error : '+err))
 })
 
-router.route('/:id').delete((req,res)=>{
+router.route('/:id').delete(protect,(req,res)=>{
     Contact.findByIdAndDelete(req.params.id)
     .then(()=>res.json('Contact removed'))
     .catch(err=>res.status(400).json('Error : '+err))

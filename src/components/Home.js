@@ -9,7 +9,10 @@ function Home() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        axios.get("http://localhost:5000/contacts/")
+        axios.get("http://localhost:5000/contacts/",{
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`}
+            })
             .then((response) => {
                 //console.log(response.data)
                 setContacts(response.data)
@@ -23,7 +26,10 @@ function Home() {
     }
 
     const deleteContact = (id) => {
-        axios.delete(`http://localhost:5000/contacts/${id}`)
+        axios.delete(`http://localhost:5000/contacts/${id}`,{
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('authToken')}`}
+            })
             .then(response => setReload(true))
             .catch(error => console.log(error))
     }

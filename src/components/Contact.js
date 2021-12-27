@@ -35,11 +35,19 @@ function Contact() {
             age:Number(age)
         }
         if(id){
-            axios.post(`http://localhost:5000/contacts/update/${id}`, contact)
+            axios.post(`http://localhost:5000/contacts/update/${id}`, contact,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+              })
             .then(response=>navigate('/'))
             .catch(error=>console.log(error))
         }else{
-            axios.post('http://localhost:5000/contacts/add',contact)
+            axios.post('http://localhost:5000/contacts/add',contact,{
+                headers: {
+                  'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+              })
             .then(response=>navigate('/'))
             .catch(error=>console.log(error))
         }
