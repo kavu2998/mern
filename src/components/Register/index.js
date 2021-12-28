@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from 'react-google-login'
 import "./index.css";
 
 const Register = () => {
@@ -12,6 +13,16 @@ const Register = () => {
   const [error, setError] = useState("");
 
   const navigate = useNavigate()
+
+  const responseGoogle = (response) => {
+    axios.post("http://localhost:5000/user/googleLogin", { tokenId: response.tokenId })
+      .then(data => {
+        console.log(data)
+        localStorage.setItem("authToken", data.data.token);
+        navigate("/");
+      })
+      .catch(error => console.log(error))
+  }
 
   const registerHandler = async (e) => {
     e.preventDefault();
@@ -25,17 +36,16 @@ const Register = () => {
       return setError("Passwords do not match");
     }
     let data = {
-        username,
-        email,
-        password
+      username,
+      email,
+      password
     }
-    axios.post("http://localhost:5000/user/register",data)
-    .then(data=>{
-        console.log(data)
+    axios.post("http://localhost:5000/user/register", data)
+      .then(data => {
         localStorage.setItem("authToken", data.data.token);
         navigate("/");
-    })
-    .catch(error=>console.log(error))
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -93,13 +103,22 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{marginTop:"10px"}}>
+        <button type="submit" className="btn btn-primary" style={{ marginTop: "10px" }}>
           Register
         </button>
 
         <span className="register-screen__subtext">
           Already have an account? <Link to="/login">Login</Link>
         </span>
+
+        <div className="text-center"> or </div>
+        <GoogleLogin
+          clientId="1018758315213-slq5oai5qfraltv0nsi8qt7ovb1etfkm.apps.googleusercontent.com"
+          buttonText="Register with Google"
+          onSuccess={responseGoogle}
+          onFailure={responseGoogle}
+          cookiePolicy={'single_host_origin'}
+        />
       </form>
     </div>
   );

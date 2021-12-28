@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import { GoogleLogin } from 'react-google-login'
 import "./index.css";
 
 const Login = ({ history }) => {
@@ -16,20 +17,28 @@ const Login = ({ history }) => {
     }
   }, [navigate]);
 
-  const loginHandler =  (e) => {
-    e.preventDefault();
-    console.log(email+" "+password)
-    let data = {
-        email,
-        password
-    }
-    axios.post("http://localhost:5000/user/login",data)
-    .then(data=>{
-        console.log(data)
+  const responseGoogle = (response) => {
+    axios.post("http://localhost:5000/user/googleLogin", { tokenId: response.tokenId })
+      .then(data => {
         localStorage.setItem("authToken", data.data.token);
         navigate("/");
-    })
-    .catch(error=>console.log(error))
+      })
+      .catch(error => console.log(error))
+  }
+
+  const loginHandler = (e) => {
+    e.preventDefault();
+    console.log(email + " " + password)
+    let data = {
+      email,
+      password
+    }
+    axios.post("http://localhost:5000/user/login", data)
+      .then(data => {
+        localStorage.setItem("authToken", data.data.token);
+        navigate("/");
+      })
+      .catch(error => console.log(error))
   };
 
   return (
@@ -66,13 +75,21 @@ const Login = ({ history }) => {
             tabIndex={2}
           />
         </div>
-        <button type="submit" className="btn btn-primary" style={{marginTop:'10px'}}>
+        <button type="submit" className="btn btn-primary" style={{ marginTop: '10px' }}>
           Login
         </button>
 
         <span className="login-screen__subtext">
           Don't have an account? <Link to="/register">Register</Link>
         </span>
+        <div className="text-center"> or </div>
+        <GoogleLogin
+          clientId="1018758315213-slq5oai5qfraltv0nsi8qt7ovb1etfkm.apps.googleusercontent.com"
+          buttonText="Login with Google"
+          onSuccess={responseGoogle}
+          onFailure={responseGoogle}
+          cookiePolicy={'single_host_origin'}
+        />
       </form>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Link,useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Navbar() {
     const navigate = useNavigate()
@@ -18,9 +18,14 @@ function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
-                            <Link className="nav-link active" aria-current="page" style={{ color: "#adb5bd", textDecoration: "none" }} to="/add">Add</Link>
-                        </li>
+                        {
+                            localStorage.getItem('authToken') ?
+                                <li className="nav-item">
+                                    <Link className="nav-link active" aria-current="page" style={{ color: "#adb5bd", textDecoration: "none" }} to="/add">Add</Link>
+                                </li> :
+                                null
+                        }
+
                     </ul>
                 </div>
                 {
